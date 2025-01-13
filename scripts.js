@@ -51,7 +51,7 @@ const tagsDisponiveis = ["Front-end", "Programação", "Data Science", "Full-Sta
 async function verificaTags(tagTexto) {
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(tagsDisponiveis.includes(tagsTexto))
+            resolve(tagsDisponiveis.includes(tagTexto))
         }, 1000)
     })
 }
