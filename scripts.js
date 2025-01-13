@@ -9,7 +9,7 @@ function lerConteudoArquivo(arquivo) {
     return new Promise((resolve, reject) => {
         const leitor = new FileReader();
         leitor.onload = () => {
-            resolve({url: leitor.result, nome: arquivo.name})
+            resolve({ url: leitor.result, nome: arquivo.name })
         }
 
         leitor.onerror = () => {
@@ -26,31 +26,18 @@ const nomeImagem = document.querySelector(".container_imagem_nome p")
 inputLoad.addEventListener('change', async (evento) => {
     const arquivo = evento.target.files[0];
 
-    if (arquivo) 
+    if (arquivo)
         try {
             const conteudoArquivo = await lerConteudoArquivo(arquivo);
             imagemPrincipal.src = conteudoArquivo.url;
             nomeImagem.textContent = conteudoArquivo.nome;
-        } catch(erro) {
+        } catch (erro) {
             console.error("Erro na leitura do arquivo")
         }
 })
 
 const inputTags = document.getElementById("categorias");
 const listaTags = document.getElementById("lista_tags");
-
-inputTags.addEventListener("keypress", (evento) => {
-    if (evento.key === "Enter") {
-        evento.preventDefault();
-        const tagTexto = inputTags.value.trim();
-        if (tagTexto !== "") {
-            const novaTag = document.createElement("li")
-            novaTag.innerHTML = `<p>${tagTexto}</p> <img src="./img/close-black.svg" class="remove_tag">`
-            listaTags.appendChild(novaTag);
-            inputTags.value = ""
-        }
-    }
-})
 
 listaTags.addEventListener("click", (evento) => {
     if (evento.target.classList.contains("remove_tag")) {
@@ -68,3 +55,26 @@ async function verificaTags(tagTexto) {
         }, 1000)
     })
 }
+
+inputTags.addEventListener("keypress", async (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        const tagTexto = inputTags.value.trim();
+        if (tagTexto !== "") {
+            try {
+                const tagExiste = await verificaTags(tagTexto);
+                if (tagExiste) {
+                    const novaTag = document.createElement("li");
+                    novaTag.innerHTML = `<p>${tagTexto}</p> <img src="./img/close-black.svg" class="remove_tag">`
+                    listaTags.appendChild(novaTag);
+                    inputTags.value = ""
+                } else {
+                    alert("Tag não encontrada!")
+                }
+            } catch (error) {
+                console.error("Erro ao verificar existência da tag.");
+                alert("Erro ao verificar existência da tag.");
+            }   
+        }
+    }
+})
